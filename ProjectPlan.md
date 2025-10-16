@@ -24,12 +24,12 @@ What broader conclusions can we draw about post-pandemic affordability and econo
 Together, these questions aim to uncover whether rising property values reflected genuine economic recovery or growing inequality between income and housing costs.
 
 Team
-This project is a collaboration between Alevtyna Rypninska and Seong [Last Name]. Working as a two-person team allows a clear division of responsibilities while maintaining accountability through a shared GitHub repository.
+This project is a collaboration between Alevtyna Rypninska and Seongwook Min. Working as a two-person team allows a clear division of responsibilities while maintaining accountability through a shared GitHub repository.
 Alevtyna Rypninska – Project Manager & Data Integration Lead:
  Alevtyna is responsible for coordinating the project timeline, organizing the GitHub structure, acquiring and cleaning the datasets, merging them by year, and documenting the data workflow to ensure reproducibility.
 
 
-Seong [Last Name] – Data Analysis & Visualization Lead:
+Seongwook Min – Data Analysis & Visualization Lead:
  Seong will perform exploratory data analysis, generate descriptive statistics and visualizations, carry out correlation and regression testing, and assist in interpreting and communicating findings in the final report.
 
 
@@ -61,7 +61,7 @@ Regression Modeling: Use a simple linear model to estimate how changes in househ
 Visualization will play an important role. Line graphs will illustrate both series on a shared timeline, and scatterplots will visualize the relationship between percentage changes in income and housing prices. The entire workflow will be automated in Python (using Pandas, NumPy, and Matplotlib) to ensure reproducibility.
 
 Timeline and Milestones
-The project will be completed through a series of structured milestones aligned with the course deadlines. Both team members, Alevtyna Rypninska and Seong [Last Name], will share equal responsibility for the project’s progress and deliverables. While Alevtyna will focus more on data analysis, identifying trends, and interpreting results, Seong will take the lead on data structure, cleaning, and integration to ensure the datasets are accurate and well-organized. All writing, documentation, and presentations will be completed collaboratively.
+The project will be completed through a series of structured milestones aligned with the course deadlines. Both team members, Alevtyna Rypninska and Seongwook Min, will share equal responsibility for the project’s progress and deliverables. While Alevtyna will focus more on data analysis, identifying trends, and interpreting results, Seong will take the lead on data structure, cleaning, and integration to ensure the datasets are accurate and well-organized. All writing, documentation, and presentations will be completed collaboratively.
 
 By October 16, 2025: Complete and submit the Project Plan (Milestone 2) including all required sections: overview, research questions, datasets, timeline, constraints, and gaps. Both Alevtyna and Seong will contribute equally to writing and editing the plan.
 
