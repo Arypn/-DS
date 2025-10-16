@@ -1,7 +1,10 @@
 ProjectPlan.md
+
 Project Title: Impact of COVID-19 on the Economy — Home Prices and Earnings
+
 Overview
 The COVID-19 pandemic triggered unprecedented changes in the U.S. economy, particularly within the housing and labor markets. While home prices surged to record highs, many households faced stagnant earnings and financial instability. This project seeks to explore how the pandemic influenced both real estate prices and median household income from 2015 through 2023, focusing on the question of whether income growth kept pace with rapidly rising property values.
+
 By integrating two government datasets — one from the Connecticut Office of Policy and Management (OPM), which reports real estate sales across the state, and another from the U.S. Census Bureau via FRED, which tracks national real median household income — this project will illustrate both local and national economic shifts during and after the pandemic. The work will demonstrate concepts from the data lifecycle, including acquisition, organization, integration, cleaning, analysis, and documentation, while also emphasizing ethical and reproducible data-handling practices.
 
 Research Questions
