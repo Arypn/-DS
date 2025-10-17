@@ -1,4 +1,4 @@
-ProjectPlan.md
+#ProjectPlan.md
 
 Project Title: Impact of COVID-19 on the Economy — Home Prices and Earnings
 
