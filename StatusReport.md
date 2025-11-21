@@ -134,7 +134,7 @@ Seong led all data preparation tasks. He cleaned and organized the OPM dataset, 
 
 ### **Alevtyna Rypninska — Data Analysis & Visualization Lead**
 
-Alevtyna focused on analytical data processing during this milestone. She implemented the CPI-U-based inflation adjustment, constructed the year-level dataset, and validated summary statistics. She also began exploratory data analysis and prepared visual structures for Milestone 4. In addition, she wrote, formatted, and finalized the Status Report and helped maintain the organization of the project repository.
+During this milestone, I focused on preparing the analytical foundation of the project by implementing the CPI-U–based inflation adjustment and converting all residential sale prices into constant 2023 dollars. I developed a clean and reproducible workflow that adjusted each sale amount and added the new price_2023 variable to the dataset. I then created the final year-level analytical dataset by aggregating residential home sales by year and computing mean nominal prices, mean inflation-adjusted prices, and median household income. This year-level table will be used for all trend analysis, correlation tests, and regression modeling in the next milestone. I also began preliminary exploratory analysis to validate our patterns and contributed to organizing and formatting the Status Report to meet all rubric requirements.
 
 ---
 
