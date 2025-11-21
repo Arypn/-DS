@@ -47,9 +47,12 @@ One major objective of this milestone was adjusting all housing prices into cons
 
 To streamline the process, instead of loading CPI values from a separate file, CPI values for each year (2015–2023) were stored directly in a Python dictionary. This minimized file dependencies and ensured a reproducible workflow. The adjustment formula used was:
 
-\[
-\text{price\_2023} = \text{Sale Amount} \times \frac{\text{CPI}_{2023}}{\text{CPI}_{\text{year}}}
-\]
+Adjusted Price in 2023 Dollars = Original Sale Price × (CPI for 2023 divided by CPI for the year the home was sold)
+
+Explanation:
+- Original Sale Price = the amount the home sold for in that year  
+- CPI for the year = the Consumer Price Index for the sale year  
+- CPI for 2023 = the Consumer Price Index for 2023 (our base year)
 
 This calculation converts every home sale into its 2023 equivalent. A new column, `price_2023`, was added to the dataframe. This inflation-adjusted value is essential for accurate trend analysis.
 
