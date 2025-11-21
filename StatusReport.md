@@ -130,7 +130,7 @@ These changes improved efficiency without altering the project’s goals.
 
 ### **Seongwook Min — Data Integration Lead**
 
-Seong led all data preparation tasks. He cleaned and organized the OPM dataset, filtered the data to include only residential properties, and merged it with income data. His work resulted in the `Cleaned_Df` dataset, which provided a reliable basis for further analysis. He ensured consistency in the dataset, handled formatting issues, and prepared the structural foundation for inflation adjustment and aggregation.
+Seongwook led all data preparation tasks. I transformed the xml file into csv, cleaned and organized the OPM dataset, and also set the range of years that were needed to answer the question. I would also filter the data to include only residential properties and merged it with income data. This work resulted in the `Cleaned_Df` dataset, which provided a reliable basis for further analysis. I ensured consistency in the dataset, handled formatting issues, and prepared the structural foundation for inflation adjustment and aggregation.
 
 ### **Alevtyna Rypninska — Data Analysis & Visualization Lead**
 
