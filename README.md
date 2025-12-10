@@ -346,7 +346,7 @@ Open the project notebook:
 is477_project.ipynb
 Run each cell sequentially.
 
-### Step 2 — Imports
+### Step 2. Imports
 
 The following libraries are required to run the project:
 
@@ -362,7 +362,7 @@ from sklearn.linear_model import LinearRegression
 If any dependencies are missing, install them using:
 pip install pandas numpy openpyxl matplotlib scikit-learn
 
-### Step 3 — Convert Excel and CSV Data into DataFrames
+### Step 3. Convert Excel and CSV Data into DataFrames
 
 The function below loads an Excel file, standardizes its column names, and converts all columns to appropriate data types.  
 We then use the function to load the FRED income dataset and `pandas.read_csv()` to load the Connecticut real estate dataset.
