@@ -524,7 +524,7 @@ plt.show()
 
 Connecticut home prices experienced a substantial and sustained real increase during the COVID-19 years. This supports the idea that the pandemic fundamentally reshaped the housing market, with demand surges and limited inventory driving prices well above pre-pandemic levels. Affordability pressures likely intensified as price growth outpaced typical income gains.
 
-**Research Question 2: How did real median household income change?**
+**Research Question 2:** How did real median household income change?
 
 We split the data into pre-pandemic (2015–2019) and COVID era (2020–2023), then calculate mean income levels and percent change.
 
@@ -570,7 +570,7 @@ Unlike home prices, which surged rapidly during the pandemic, real median househ
 
 These trends show that while housing prices accelerated at an unprecedented pace, household earnings did not keep up. As a result, the gap between income and housing costs widened significantly, intensifying affordability challenges for many families. This imbalance indicates that the housing market’s rapid escalation was driven more by structural market pressures than by growth in household financial capacity, contributing to reduced affordability during and after the pandemic.
 
-**Research Question 3: What relationship exists between changes in income and changes in home prices during and after the pandemic?**
+**Research Question 3:** What relationship exists between changes in income and changes in home prices during and after the pandemic?
 
 ```python
 # Correlation between household income and inflation-adjusted home prices
@@ -634,7 +634,7 @@ Although income and home prices exhibit a moderate long-run correlation, income 
 
 Overall, the disconnect between income and housing prices reinforces the conclusion that the dramatic rise in home values during COVID-19 did not reflect improved household economic conditions. Instead, it points to broader structural changes in housing supply and demand that widened the affordability gap during and after the pandemic.
 
-**Research Question 4: What broader conclusions can we draw about post-pandemic affordability and economic resilience?**
+**Research Question 4:** What broader conclusions can we draw about post-pandemic affordability and economic resilience?
 
 The combined trends in housing prices and household income reveal that the post-pandemic economy experienced a significant imbalance between property values and earnings. While home prices rose sharply during the COVID-19 period—far outpacing inflation—median household income grew only modestly. This widening gap indicates that housing affordability declined substantially, suggesting that rising property values did not reflect genuine improvements in household financial strength. Instead, the rapid escalation in home prices points to structural pressures in the housing market rather than broad-based economic recovery.
 
