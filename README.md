@@ -265,7 +265,70 @@ These findings indicate that the pandemic period did not represent a uniform eco
 
 The evidence shows a clear imbalance: home prices surged rapidly, incomes stagnated, and affordability declined. While income and home prices share a moderate long-term relationship, pandemic-era price dynamics were driven by forces outside household earnings. This mismatch offers a critical insight into the broader economic landscape of the post-COVID era—one marked by increased financial strain for prospective homeowners and heightened inequality in housing accessibility.
 
+## Future Work
 
+This project provided meaningful insights into the relationship between Connecticut residential home prices and U.S. median household income during the years surrounding the COVID-19 pandemic. While the analysis revealed a moderate long-run positive correlation between income and housing prices, the findings also made clear that income alone cannot account for the dramatic surge in inflation-adjusted home prices between 2020 and 2023. The linear regression model explained only about one-third of the variation in real home prices, indicating that a large share of housing market behavior was driven by factors not represented in our income variable. This key takeaway shapes several important directions for future research, broader methodological improvements, and lessons learned about studying housing markets.
+
+### 1. Incorporating Additional Economic Variables
+
+One of the most significant areas for future work involves expanding the set of explanatory variables. Housing markets are influenced by a complex combination of macroeconomic, demographic, and policy-driven forces. Among these, **interest rates** are especially crucial. During the early pandemic period, mortgage rates fell to historic lows, fundamentally altering borrowing conditions and increasing households’ purchasing power. Lower financing costs often allow buyers to afford higher prices, even when incomes remain stagnant. By adding mortgage rate data (e.g., the average 30-year fixed rate from Freddie Mac), future research could quantify how much of the price escalation was driven by favorable borrowing conditions rather than underlying economic growth.
+
+Alongside interest rates, future models should also integrate measures of **inflation, wage growth distribution, and consumer sentiment**, which may influence housing demand. Forecast-oriented datasets—such as expectations of future home prices—could also help disentangle the behavioral dynamics that emerged during the pandemic.
+
+### 2. Accounting for Housing Supply Dynamics
+
+A second major direction for future work is analyzing the **supply side of the housing market**. Rising prices can be caused either by increased demand or by restricted supply—and in many cases, both. Connecticut has historically exhibited slow housing development due to zoning constraints, limited new construction, and an aging housing stock. COVID-19 further disrupted building activity through labor shortages, material delays, and supply-chain breakdowns.
+
+Future analysis could incorporate:
+
+- **Building permits (U.S. Census Building Permit Survey)**
+- **Vacancy rates**
+- **Annual housing inventory levels**
+- **Time-on-market data**
+- **Construction cost indices**
+
+These variables would allow researchers to measure whether Connecticut’s price surge reflected structural constraints in supply rather than traditional economic growth.
+
+### 3. Investigating Migration and Demographic Change
+
+The pandemic altered migration patterns across the United States. Densely populated urban centers saw outflows, while suburban and rural areas experienced increases in demand as households sought more space and work-from-home flexibility. Given Connecticut’s proximity to major cities like New York and Boston, it is very likely that pandemic-era migration contributed significantly to increased housing pressure.
+
+Future work should integrate:
+
+- **IRS county-to-county migration flows**
+- **Census Bureau’s ACS migration estimates**
+- **Change-of-address data from USPS**
+
+A richer demographic perspective would help determine whether population shifts played a meaningful role in housing demand, particularly in specific Connecticut counties or towns.
+
+### 4. Improving Modeling Techniques
+
+The simple linear regression used in this project served as an interpretable starting point but may not capture nonlinear or interactive effects that characterize real-world housing systems. Future modeling approaches could include:
+
+- **Multiple linear regression with additional covariates**
+- **Time-series analysis (e.g., ARIMA or structural break models)**
+- **Panel data models if regional disaggregation becomes available**
+- **Machine learning methods** such as random forests, gradient boosting, or neural networks
+
+These approaches could identify more nuanced relationships, interactions between variables, and potentially more accurate predictive models. Housing markets often exhibit nonlinear dynamics—thresholds, tipping points, and delayed reactions—making advanced modeling techniques especially valuable.
+
+### 5. Using Finer-Grained Temporal and Spatial Data
+
+This project used annual data, which is appropriate for long-run comparisons but conceals short-term volatility. Housing markets often respond rapidly to policy changes, interest rate adjustments, or economic shocks. Future work should consider:
+
+- **Monthly or quarterly data for both prices and income proxies**
+- **Sub-state geographic breakdowns**, such as county-level or ZIP code-level property data
+- **Comparisons across states** to contextualize Connecticut trends regionally
+
+More granular analysis would allow a deeper understanding of when price spikes occurred, how quickly markets responded to shocks, and which communities experienced the greatest changes.
+
+### 6. Event-Based and Mixed-Methods Analysis
+
+Finally, future work could contextualize quantitative findings with **event-based timelines** or **qualitative approaches**. Events such as state lockdowns, federal stimulus checks, eviction moratoriums, the shift to remote work, and global supply-chain disruptions may have shaped housing market behavior in ways that purely numerical datasets cannot capture. Combining quantitative models with qualitative timeline analysis—or even interviews with real estate professionals—could produce a more complete narrative of the pandemic housing market.
+
+### Summary
+
+In summary, this project demonstrates that household income explains only a small portion of the dramatic growth in Connecticut housing prices during the COVID-19 period. Future research should broaden the analytical scope by integrating interest rates, supply constraints, migration patterns, and more complex statistical techniques. Expanding the dataset and refining the modeling framework would help identify which variables were most influential and develop a more comprehensive understanding of how pandemic-era dynamics reshaped housing affordability and economic resilience.
 
 Milestone 4: Final Project Submission 
 
