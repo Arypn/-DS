@@ -331,18 +331,26 @@ Finally, future work could contextualize quantitative findings with **event-base
 In summary, this project demonstrates that household income explains only a small portion of the dramatic growth in Connecticut housing prices during the COVID-19 period. Future research should broaden the analytical scope by integrating interest rates, supply constraints, migration patterns, and more complex statistical techniques. Expanding the dataset and refining the modeling framework would help identify which variables were most influential and develop a more comprehensive understanding of how pandemic-era dynamics reshaped housing affordability and economic resilience.
 
 
-### Reproducing
+## Reproducing
+This section explains how to fully reproduce our analysis from raw data acquisition through inflation adjustment, dataset integration, visualization, and statistical modeling. The workflow was executed in VSCode using a Jupyter Notebook.
 
-Step 0. Data Acquisition
+---
+### Step 0. Data Acquisition
 Download the datasets from the website links given either in data profile or citations
 Download the xlsx file from U.S. Median Household Income series (MEHOINUSA672N) from the Federal Reserve Bank of St. Louis (FRED)
 Download the csv file from the Connecticut Real Estate Sales dataset from Data.gov
 
-Step 1. VSCode
-We used VSCode for our coding, open it up and use notebook to follow along.
+### Step 1. VSCode
+We used **VSCode** with the **Jupyter Notebook extension**.  
+Open the project notebook:
+is477_project.ipynb
+Run each cell sequentially.
 
-Step 2. Imports
-#The imports required for the whole project
+### Step 2 — Imports
+
+The following libraries are required to run the project:
+
+```python
 import pandas as pd
 import numpy as np
 import os
@@ -350,18 +358,21 @@ import openpyxl
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
 from sklearn.linear_model import LinearRegression
+```
+If any dependencies are missing, install them using:
+pip install pandas numpy openpyxl matplotlib scikit-learn
 
+### Step 3 — Convert Excel and CSV Data into DataFrames
 
-Step 3. Change Data to CSV
-#The function changes the excel file to dataframe
+The function below loads an Excel file, standardizes its column names, and converts all columns to appropriate data types.  
+We then use the function to load the FRED income dataset and `pandas.read_csv()` to load the Connecticut real estate dataset.
 
-
-
+```python
+# Function to convert an Excel file into a clean pandas DataFrame
 def excel_to_df(excel_file: str, sheet_name: str = None) -> pd.DataFrame:
-
-
     df = pd.read_excel(excel_file, sheet_name=sheet_name)
-   
+
+    # Standardize column names
     df.columns = (
         df.columns
         .str.lower()
@@ -369,22 +380,21 @@ def excel_to_df(excel_file: str, sheet_name: str = None) -> pd.DataFrame:
         .str.replace(" ", "_")
         .str.replace(r"[^0-9a-zA-Z_]", "", regex=True)
     )
-   
+
     df = df.convert_dtypes()
-   
     return df
-#Using the function to transform the actual excel into a df called xl_df
+
+# Convert FRED Excel file into a DataFrame
 xl_df = excel_to_df("MEHOINUSA672N.xlsx", sheet_name="Annual")
 
+# IMPORTANT: Replace the filename above with your own local file path if needed.
 
-Make sure that you replace the filename with your own path for the file
-#Using pandas built in functions to transform a csv to a df called csv_df
+# Load Connecticut housing sales CSV
 csv_df = pd.read_csv("Real_Estate_Sales_2001-2023_GL.csv", encoding="utf-8")
+```
 
-
-
-
-Step 4. Cleaning
+### Step 4. Cleaning
+```python
 #Changing the dates into the same format for both dataframes as well as renaming a few columns
 csv_df["Date Recorded"] = pd.to_datetime(csv_df["Date Recorded"], format="%m/%d/%Y", errors="coerce")
 xl_df["observation_date"] = pd.to_datetime(xl_df["observation_date"], errors="coerce")
@@ -404,18 +414,19 @@ merged_df["Date"] = merged_df["Date Recorded"]
 merged_df = merged_df.drop(columns=["Non Use Code", "Assessor Remarks", "OPM remarks", "Location", "Date Recorded"])
 merged_df = merged_df.sort_values("Year")
 
-# Since we are mostly focusing on pre an during covid, we will be focusing only on 2015 to 2023
+#Since we are mostly focusing on pre an during covid, we will be focusing only on 2015 to 2023
 filtered_df = merged_df[(merged_df["Year"] >= 2015) & (merged_df["Year"] <= 2023)]
 
 #cleaning step and we dropped the missing values
 Cleaned_Df = filtered_df.dropna(subset=["Property Type", "Residential Type"], how="all")
+```
 
+### Step 5. CPI Data and Inflation Adjustment
 
-Step 5. CPI Data
+The following code creates a CPI lookup table, merges it into the cleaned dataset, and computes inflation-adjusted home prices in 2023 dollars.
 
-#Index for CPI,  created new df just based of the CPI
-
-
+```python
+# CPI index values from 2015–2023
 cpi_dict = {
     2015: 237.017,
     2016: 240.007,
@@ -428,31 +439,17 @@ cpi_dict = {
     2023: 305.109
 }
 
-
+# Convert CPI dictionary into DataFrame
 cpi_df = pd.DataFrame(list(cpi_dict.items()), columns=['year', 'cpi'])
 
-
-
-
-#New merged with cleaned and cpi
-
-
+# Merge CPI values into cleaned dataset
 adj_df = Cleaned_Df.merge(cpi_df, left_on='Year', right_on='year', how='left')
 
-
-
-#Use this data as reference to calculate inflation adjusted prices
-
-
+# Inflation-adjust to 2023 dollars
 cpi_2023 = cpi_dict[2023]
-
-
 adj_df['price_2023'] = adj_df['Sale Amount'] * (cpi_2023 / adj_df['cpi'])
 
-
-#Function to find the mean prices per year
-
-
+# Compute average inflation-adjusted price per year
 mean_price_year = (
     adj_df.groupby('Year')['price_2023']
           .mean()
@@ -460,71 +457,57 @@ mean_price_year = (
           .rename(columns={'price_2023': 'mean_residential_price_2023usd'})
 )
 
-
-
-
-#This adds the yearly mean inflation-adjusted residential price back into the full dataset
+# Merge the per-year mean back into the dataset
 adj_df = adj_df.merge(mean_price_year, on='Year', how='left')
 
-# Create final year level dataset
+# Create final year-level summary dataset
 final_year_df = (
     adj_df.groupby('Year')
           .agg({
-              'price_2023': 'mean',            # mean inflation-adjusted home price
-              'Sale Amount': 'mean',           # mean nominal (raw) home price
+              'price_2023': 'mean',            # inflation-adjusted home price
+              'Sale Amount': 'mean',           # raw home price
               'mehoinusa672n': 'mean'          # median household income
           })
           .reset_index()
 )
 
-
+# Rename for clarity
 final_year_df = final_year_df.rename(columns={
     'price_2023': 'mean_residential_price_2023usd',
     'Sale Amount': 'mean_raw_sale_amount',
     'mehoinusa672n': 'median_household_income'
 })
+```
 
+### Step 6. Answer Research Questions / Analysis
 
+**Research Question 1:** How did Connecticut home prices change during COVID (2019–2023) vs. pre-pandemic (2015–2019)?
 
-Step 6. Answer Research Question / Analysis
-## Research Question 1 How did Connecticut home prices change during COVID (2019–2023) vs. pre-pandemic (2015–2019)?
-
-
-#Focus only on CT home prices
-#Create two different dataframes based of post and pre covid
-#Get the percent change
-
+```python
+# Focus only on CT home prices
+# Create two different dataframes based on pre- and during-COVID periods
 
 df = final_year_df.copy()
-
 
 pre = df[(df["Year"] >= 2015) & (df["Year"] <= 2019)]
 during = df[(df["Year"] >= 2020) & (df["Year"] <= 2023)]
 
-
 pre_mean = pre["mean_residential_price_2023usd"].mean()
 during_mean = during["mean_residential_price_2023usd"].mean()
 
-
 pct_change = ((during_mean - pre_mean) / pre_mean) * 100
-
 
 print("Pre-pandemic mean CT home price (2015–2019):", pre_mean)
 print("COVID-period mean CT home price (2020–2023):", during_mean)
 print("Percent change:", pct_change, "%")
-
-
-Pre-pandemic mean CT home price (2015–2019): 425481.53910530685
-COVID-period mean CT home price (2020–2023): 609405.3387548988
+```
+Pre-pandemic mean CT home price (2015–2019): 425481.53910530685  
+COVID-period mean CT home price (2020–2023): 609405.3387548988  
 Percent change: 43.22721028892177 %
 
-
-
-
+```python
 #Home prices Graph with covid line
 import matplotlib.pyplot as plt
-
-
 plt.figure(figsize=(10,5))
 plt.plot(df["Year"], df["mean_residential_price_2023usd"], marker="o")
 plt.axvline(2020, color="red", linestyle="--", label="COVID Begins")
@@ -534,7 +517,7 @@ plt.xlabel("Year")
 plt.legend()
 plt.grid()
 plt.show()
-
+```
 
 <img width="876" height="470" alt="image" src="https://github.com/user-attachments/assets/c7e90321-ee99-4906-b7d2-d09561b114e4" />
 
