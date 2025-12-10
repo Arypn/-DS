@@ -524,35 +524,35 @@ plt.show()
 
 Connecticut home prices experienced a substantial and sustained real increase during the COVID-19 years. This supports the idea that the pandemic fundamentally reshaped the housing market, with demand surges and limited inventory driving prices well above pre-pandemic levels. Affordability pressures likely intensified as price growth outpaced typical income gains.
 
+**Research Question 2: How did real median household income change?**
 
-## Research Question 2: How did real median household income change?
+We split the data into pre-pandemic (2015–2019) and COVID era (2020–2023), then calculate mean income levels and percent change.
+
+```python
 # Split into pre-pandemic (2015–2019) and COVID-era (2020–2023)
 # Calculate means and percent changes
 
-
 df = final_year_df.copy()
-
 
 pre = df[(df["Year"] >= 2015) & (df["Year"] <= 2019)]
 during = df[(df["Year"] >= 2020) & (df["Year"] <= 2023)]
 
-
 pre_income = pre["median_household_income"].mean()
 during_income = during["median_household_income"].mean()
 
-
 income_pct_change = ((during_income - pre_income) / pre_income) * 100
-
 
 print("Pre-pandemic mean median household income (2015–2019):", pre_income)
 print("COVID-period mean median household income (2020–2023):", during_income)
 print("Percent change:", income_pct_change, "%")
+```
+
 Pre-pandemic mean median household income (2015–2019): 77168.0
 COVID-period mean median household income (2020–2023): 81260.0
 Percent change: 5.3027161517727555 %
 
+```python
 #Income Graph with covid line
-
 plt.figure(figsize=(10,5))
 plt.plot(df["Year"], df["median_household_income"], marker="o", color="green")
 plt.axvline(2020, color="red", linestyle="--", label="COVID Begins")
@@ -562,139 +562,107 @@ plt.ylabel("Median Household Income (USD)")
 plt.grid()
 plt.legend()
 plt.show()
-
+```
 
 <img width="868" height="470" alt="image" src="https://github.com/user-attachments/assets/1e88ef56-8c4b-48c5-81d9-7bcdc3db08f1" />
 
+Unlike home prices, which surged rapidly during the pandemic, real median household income exhibited only modest growth across the COVID-19 period. Specifically, income peaked just before the pandemic in 2019, then declined from 2020 through 2022 as labor markets experienced widespread disruption. Although income rebounded in 2023, the overall increase across the pandemic years remained relatively small.
 
-Unlike home prices, which surged rapidly during the pandemic, real median household income showed only a small positive change across the COVID period. In fact:
+These trends show that while housing prices accelerated at an unprecedented pace, household earnings did not keep up. As a result, the gap between income and housing costs widened significantly, intensifying affordability challenges for many families. This imbalance indicates that the housing market’s rapid escalation was driven more by structural market pressures than by growth in household financial capacity, contributing to reduced affordability during and after the pandemic.
 
-Income peaked just before the pandemic (2019)
+**Research Question 3: What relationship exists between changes in income and changes in home prices during and after the pandemic?**
 
-Declined in 2020–2022 due to labor market disruptions
-
-Rebounded in 2023, but still grew only modestly overall
-
-This suggests that while the housing market experienced extreme upward pressure, household earnings did not grow proportionally. The gap between housing costs and income likely intensified affordability challenges for many families during and after the pandemic.
-
-
-## Research Question 3: What relationship exists between changes in income and changes in home prices during and after the pandemic?
-
+```python
 # Correlation between household income and inflation-adjusted home prices
 corr = df["median_household_income"].corr(df["mean_residential_price_2023usd"])
 print("Correlation:", corr)
+```
 Correlation: 0.5871509255866934
 
-According to correlation, income influences housing prices, but income alone cannot explain dramatic price shifts, especially the pandemic spike in 2020.
+The correlation coefficient of 0.587 indicates a moderately positive long-run relationship between income and home prices.
+However, income alone cannot explain the dramatic pandemic-era price spike, especially in 2020.
 
+```python
 #Linear Regression: Income vs. Housing Price
-
 
 X = df["median_household_income"].values.reshape(-1, 1)
 y = df["mean_residential_price_2023usd"].values.reshape(-1, 1)
 
-
 model = LinearRegression()
 model.fit(X, y)
-
 
 slope = model.coef_[0][0]
 intercept = model.intercept_[0]
 r2 = model.score(X, y)
 
-
 print("Regression Equation: price = {:.2f} * income + {:.2f}".format(slope, intercept))
 print("R-squared:", r2)
+```
+
 Regression Equation: price = 18.58 * income + -960292.71
 R-squared: 0.34474620941731093
 
-
+```python
 #Regression Model of income vs housing prices
 #Generates prediction line, and each dot on the graph represents a year
 #Use mean because that is the data we want to explain
 #Use median because of its earning
 
-
 x_range = np.linspace(X.min(), X.max(), 200).reshape(-1, 1)
 y_pred = model.predict(x_range)
-
 
 plt.figure(figsize=(8,6))
 plt.scatter(X, y, color="purple", label="Actual Data", alpha=0.7)
 plt.plot(x_range, y_pred, color="orange", linewidth=2.5, label="Regression Line")
 
-
 plt.title("Linear Regression: Income vs. Home Prices", fontsize=14)
 plt.xlabel("Median Household Income (USD)", fontsize=12)
 plt.ylabel("Mean Residential Home Price (2023 USD)", fontsize=12)
 
-
 plt.grid(True, alpha=0.3)
 plt.legend()
 plt.show()
-
+```
 
 <img width="725" height="552" alt="image" src="https://github.com/user-attachments/assets/226bb2e0-10b3-4170-b53e-ec761395b21b" />
 
+**Interpretation of Regression Results**
 
-#Slope = 18.579314981810274
-#For every $1 increase in median household income, the mean residential price increases by ~$18.58
+The regression slope of approximately **18.58** indicates that for every **$1 increase** in median household income, the mean residential home price increases by roughly **$18.58**. While this confirms a positive relationship between income and housing prices over time, the model’s R² of **0.34** shows that income explains only about one-third of the variation in home prices.
 
+Although income and home prices exhibit a moderate long-run correlation, income alone does not account for the sharp surge in home prices observed during the COVID-19 period. The pandemic housing market was influenced primarily by non-income factors such as shifts in housing demand, historically low interest rates, limited inventory, and demographic migration trends. These forces drove prices upward far more quickly than income growth.
 
-While income and home prices have a moderate long-term positive relationship, income does not account for the dramatic surge in housing prices during COVID-19.
-The pandemic housing market was influenced primarily by non-income factors, leading to a widening affordability gap.
+Overall, the disconnect between income and housing prices reinforces the conclusion that the dramatic rise in home values during COVID-19 did not reflect improved household economic conditions. Instead, it points to broader structural changes in housing supply and demand that widened the affordability gap during and after the pandemic.
 
-This disconnect reinforces the idea that rising home prices during COVID-19 did not reflect improved household economic conditions—but instead structural shifts in housing demand and supply.
-
-
-## Research Question 4: What broader conclusions can we draw about post-pandemic affordability and economic resilience?
+**Research Question 4: What broader conclusions can we draw about post-pandemic affordability and economic resilience?**
 
 The combined trends in housing prices and household income reveal that the post-pandemic economy experienced a significant imbalance between property values and earnings. While home prices rose sharply during the COVID-19 period—far outpacing inflation—median household income grew only modestly. This widening gap indicates that housing affordability declined substantially, suggesting that rising property values did not reflect genuine improvements in household financial strength. Instead, the rapid escalation in home prices points to structural pressures in the housing market rather than broad-based economic recovery.
 
 Overall, the evidence suggests that the post-pandemic period was characterized by increased economic inequality and a decline in affordability, as income growth failed to keep pace with the surging cost of homeownership. These findings highlight vulnerabilities in economic resilience, especially for households attempting to enter or remain in the housing market after the pandemic.
 
+## References
 
+Office of Policy and Management. (2025, September 14). *Real Estate Sales 2001–2023 GL* [Dataset]. Data.gov.  
+https://catalog.data.gov/dataset/real-estate-sales-2001-2018
 
+U.S. Census Bureau. (n.d.). *Real Median Household Income in the United States (MEHOINUSA672N)* [Dataset].  
+Federal Reserve Bank of St. Louis (FRED). https://fred.stlouisfed.org/series/MEHOINUSA672N
 
+Microsoft Corporation. (n.d.). *Visual Studio Code* (Version 3.11.7 / 3.13.7) [Software].  
+Used for data cleaning, analysis, and visualization. https://code.visualstudio.com/
 
-Milestone 4: Final Project Submission 
+Python Software Foundation. (n.d.). *Python* (Version 3.x) [Programming language].  
+https://www.python.org/
 
-Title: Impact of COVID-19 on the Economy: Home Prices and Household Earnings
+Van Rossum, G., & Drake, F. L. (2009). *Python 3 Reference Manual*. CreateSpace.
 
-Contributors: Alevtyna Rypninska (ar83) & Seongwook Min (sm116)
+Pedregosa, F., et al. (2011). *Scikit-learn: Machine Learning in Python*. Journal of Machine Learning Research, 12, 2825–2830.  
+(Used for regression modeling.)
 
-Summary: [500-1000 words] Description of your project, motivation, research question(s), and any findings.
+Hunter, J. D. (2007). *Matplotlib: A 2D Graphics Environment*. Computing in Science & Engineering, 9(3), 90–95.  
+(Used for visualizations.)
 
-Data profile: [500-1000 words] Description of each dataset used including all ethical/legal constraints.
+McKinney, W. (2010). *Data Structures for Statistical Computing in Python*. Proceedings of the 9th Python in Science Conference.  
+(Pandas used for data cleaning, merging, and analysis.)
 
-Data quality: [500-1000 words] Summary of the quality assessment and findings.
-
-Findings: [~500 words] Description of any findings including numeric results and/or visualizations.
-
-Future work: [~500-1000 words] Brief discussion of any lessons learned and potential future work.
-This project helped give insight into the picture of the relationship between household income and Connecticut home prices during the years surrounding the COVID pandemic. While our analysis showed that income had a moderate, positive correlation with housing prices over the long run, it also became clear that income alone cannot account for the price surge between 2020 and 2023. A regression model with income as the only variable explained only about 1/3 of the adjusted home prices, leaving most of the housing market’s movement unexplained. This outcome suggests several other factors along with real world events could help explain this change.
-Housing markets respond to many forces at once, and income, especially when capturing only one part of household economics. Future work should include variables that reflect the other aspects of housing. For example, interest rates, as interest rates reached historic lows during this period, making borrowing cheaper and enabling buyers to bid more aggressively. Incorporating monthly or quarterly data could help quantify how much of the price spike was made by changes in financing conditions.
-Another important area that could be looked at in the future, involves housing supply. Prices can rise for two very different reasons: because demand increases, or because supply remains limited or both. Connecticut, like many other states, faced constraints on new construction long before the pandemic due to many zoning restrictions, aging housing stock, and slow rates of development. The pandemic also contributed to the ongoing problems by creating construction delays and supply-chain interruptions that further tightened supply. Future work could integrate datasets on building permits, vacancy rates, or total residential inventory to try and understand the supply side of constraints that contributed to price appreciation.
-Migration could also be a potential angle to consider. During covid, densely populated cities would have many residents seeking more space and lower density living areas, while suburban and rural areas saw increases in housing demand. Connecticut may have been involved in these trends, especially given how close it is to New York. Incorporating migration data such as data from the Census Bureau could help determine whether population shifts played a significant role in bidding up home prices during the pandemic.
-Another possible future work could be improving the analysis. A simple linear regression is useful for interpretation, but housing markets are complex and may follow nonlinear patterns. As such, using techniques such as multiple regression or even machine learning models like random forests could uncover better relationships between variables. These models may better capture how multiple factors income, interest rates, supply measures, and demographic change work together to shape the housing market.
-
-
-Finally, future work could include event based analysis to contextualize the findings. Events such as statewide lockdowns, shifts to remote work, or any global events related to money or houses that may have influenced the housing market in a way that the data alone cannot capture. Maybe trying to combine quantitative and qualitative together would better explain the work.
-In summary, the project demonstrated that income is only one piece of the explanation. Future research should integrate additional economic, demographic, and policy variables to develop a better explanation for the post pandemic housing prices. With greater data and more detailed modeling, it should be possible to understand what variables were directly and greatly important to the pricing changes due to covid. 
-
-
-
-
-
-Reproducing: Sequence of steps required for someone else to reproduce your results.
-
-References: Formatted citations for any papers, datasets, or software used in your project.
-
-For the real-estate dataset: 
-  Office of Policy and Management. (2025, September 14). Real Estate Sales 2001-2023 GL [Dataset]. Data.gov. https://catalog.data.gov/dataset/real-estate-sales-2001-2018 
-  
-For the median household income data: 
-  U.S. Census Bureau. (n.d.). Real Median Household Income in the United States [MEHOINUSA672N]. FRED – Federal Reserve Bank of St. Louis. https://fred.stlouisfed.org/series/MEHOINUSA672N
-
-Visual Studio Code (version 3.11.7 or 3.13.7). Microsoft Corporation. Used for data cleaning, coding, and visualization.
 
