@@ -334,7 +334,7 @@ In summary, this project demonstrates that household income explains only a smal
 ## Reproducing
 This section explains how to fully reproduce our analysis from raw data acquisition through inflation adjustment, dataset integration, visualization, and statistical modeling. The workflow was executed in VSCode using a Jupyter Notebook.
 
-Box Folder: https://uofi.app.box.com/folder/355144789735
+Box Folder: https://uofi.app.box.com/folder/355144588679
 ---
 ### Step 0. Data Acquisition
 Download the datasets from the website links given either in data profile or citations
