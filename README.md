@@ -41,8 +41,17 @@ Data quality: [500-1000 words] Summary of the quality assessment and findings.
 Findings: [~500 words] Description of any findings including numeric results and/or visualizations.
 
 Future work: [~500-1000 words] Brief discussion of any lessons learned and potential future work.
+We learned through our analysis that income, while somewhat helps explain the housing prices, doesn't truly explain the reason. As such, future work should include more variables that seem to be related in someway to housing. Also maybe specific events that happened aroudn the time covid started could also be a reason to why the prices changed. With many other variables, our R^2 may be able to be closer to 1, and we could better explain the changes.
 
 Reproducing: Sequence of steps required for someone else to reproduce your results.
 
 References: Formatted citations for any papers, datasets, or software used in your project.
+
+For the real-estate dataset: 
+  Office of Policy and Management. (2025, September 14). Real Estate Sales 2001-2023 GL [Dataset]. Data.gov. https://catalog.data.gov/dataset/real-estate-sales-2001-2018 
+  
+For the median household income data: 
+  U.S. Census Bureau. (n.d.). Real Median Household Income in the United States [MEHOINUSA672N]. FRED – Federal Reserve Bank of St. Louis. https://fred.stlouisfed.org/series/MEHOINUSA672N
+
+Visual Studio Code (version 3.11.7 or 3.13.7). Microsoft Corporation. Used for data cleaning, coding, and visualization.
 
