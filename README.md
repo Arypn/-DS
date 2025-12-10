@@ -330,6 +330,350 @@ Finally, future work could contextualize quantitative findings with **event-base
 
 In summary, this project demonstrates that household income explains only a small portion of the dramatic growth in Connecticut housing prices during the COVID-19 period. Future research should broaden the analytical scope by integrating interest rates, supply constraints, migration patterns, and more complex statistical techniques. Expanding the dataset and refining the modeling framework would help identify which variables were most influential and develop a more comprehensive understanding of how pandemic-era dynamics reshaped housing affordability and economic resilience.
 
+
+### Reproducing
+
+Step 0. Data Acquisition
+Download the datasets from the website links given either in data profile or citations
+Download the xlsx file from U.S. Median Household Income series (MEHOINUSA672N) from the Federal Reserve Bank of St. Louis (FRED)
+Download the csv file from the Connecticut Real Estate Sales dataset from Data.gov
+
+Step 1. VSCode
+We used VSCode for our coding, open it up and use notebook to follow along.
+
+Step 2. Imports
+#The imports required for the whole project
+import pandas as pd
+import numpy as np
+import os
+import openpyxl
+import matplotlib.pyplot as plt
+from sklearn.metrics import r2_score
+from sklearn.linear_model import LinearRegression
+
+
+Step 3. Change Data to CSV
+#The function changes the excel file to dataframe
+
+
+
+def excel_to_df(excel_file: str, sheet_name: str = None) -> pd.DataFrame:
+
+
+    df = pd.read_excel(excel_file, sheet_name=sheet_name)
+   
+    df.columns = (
+        df.columns
+        .str.lower()
+        .str.strip()
+        .str.replace(" ", "_")
+        .str.replace(r"[^0-9a-zA-Z_]", "", regex=True)
+    )
+   
+    df = df.convert_dtypes()
+   
+    return df
+#Using the function to transform the actual excel into a df called xl_df
+xl_df = excel_to_df("MEHOINUSA672N.xlsx", sheet_name="Annual")
+
+
+Make sure that you replace the filename with your own path for the file
+#Using pandas built in functions to transform a csv to a df called csv_df
+csv_df = pd.read_csv("Real_Estate_Sales_2001-2023_GL.csv", encoding="utf-8")
+
+
+
+
+Step 4. Cleaning
+#Changing the dates into the same format for both dataframes as well as renaming a few columns
+csv_df["Date Recorded"] = pd.to_datetime(csv_df["Date Recorded"], format="%m/%d/%Y", errors="coerce")
+xl_df["observation_date"] = pd.to_datetime(xl_df["observation_date"], errors="coerce")
+xl_df["Year"] = xl_df["observation_date"].dt.year	
+csv_df = csv_df.rename(columns={"List Year": "Year"})
+
+
+#Merge the two datasets based of the year with left join
+merged_df = csv_df.merge(
+    xl_df[["Year", "mehoinusa672n"]],
+    on="Year",
+    how="left"
+)
+
+#Sorting out which columns are needed and not needed and then sorting by year
+merged_df["Date"] = merged_df["Date Recorded"]
+merged_df = merged_df.drop(columns=["Non Use Code", "Assessor Remarks", "OPM remarks", "Location", "Date Recorded"])
+merged_df = merged_df.sort_values("Year")
+
+# Since we are mostly focusing on pre an during covid, we will be focusing only on 2015 to 2023
+filtered_df = merged_df[(merged_df["Year"] >= 2015) & (merged_df["Year"] <= 2023)]
+
+#cleaning step and we dropped the missing values
+Cleaned_Df = filtered_df.dropna(subset=["Property Type", "Residential Type"], how="all")
+
+
+Step 5. CPI Data
+
+#Index for CPI,  created new df just based of the CPI
+
+
+cpi_dict = {
+    2015: 237.017,
+    2016: 240.007,
+    2017: 245.120,
+    2018: 251.107,
+    2019: 255.657,
+    2020: 258.811,
+    2021: 270.970,
+    2022: 292.655,
+    2023: 305.109
+}
+
+
+cpi_df = pd.DataFrame(list(cpi_dict.items()), columns=['year', 'cpi'])
+
+
+
+
+#New merged with cleaned and cpi
+
+
+adj_df = Cleaned_Df.merge(cpi_df, left_on='Year', right_on='year', how='left')
+
+
+
+#Use this data as reference to calculate inflation adjusted prices
+
+
+cpi_2023 = cpi_dict[2023]
+
+
+adj_df['price_2023'] = adj_df['Sale Amount'] * (cpi_2023 / adj_df['cpi'])
+
+
+#Function to find the mean prices per year
+
+
+mean_price_year = (
+    adj_df.groupby('Year')['price_2023']
+          .mean()
+          .reset_index()
+          .rename(columns={'price_2023': 'mean_residential_price_2023usd'})
+)
+
+
+
+
+#This adds the yearly mean inflation-adjusted residential price back into the full dataset
+adj_df = adj_df.merge(mean_price_year, on='Year', how='left')
+
+# Create final year level dataset
+final_year_df = (
+    adj_df.groupby('Year')
+          .agg({
+              'price_2023': 'mean',            # mean inflation-adjusted home price
+              'Sale Amount': 'mean',           # mean nominal (raw) home price
+              'mehoinusa672n': 'mean'          # median household income
+          })
+          .reset_index()
+)
+
+
+final_year_df = final_year_df.rename(columns={
+    'price_2023': 'mean_residential_price_2023usd',
+    'Sale Amount': 'mean_raw_sale_amount',
+    'mehoinusa672n': 'median_household_income'
+})
+
+
+
+Step 6. Answer Research Question / Analysis
+## Research Question 1 How did Connecticut home prices change during COVID (2019–2023) vs. pre-pandemic (2015–2019)?
+
+
+#Focus only on CT home prices
+#Create two different dataframes based of post and pre covid
+#Get the percent change
+
+
+df = final_year_df.copy()
+
+
+pre = df[(df["Year"] >= 2015) & (df["Year"] <= 2019)]
+during = df[(df["Year"] >= 2020) & (df["Year"] <= 2023)]
+
+
+pre_mean = pre["mean_residential_price_2023usd"].mean()
+during_mean = during["mean_residential_price_2023usd"].mean()
+
+
+pct_change = ((during_mean - pre_mean) / pre_mean) * 100
+
+
+print("Pre-pandemic mean CT home price (2015–2019):", pre_mean)
+print("COVID-period mean CT home price (2020–2023):", during_mean)
+print("Percent change:", pct_change, "%")
+
+
+Pre-pandemic mean CT home price (2015–2019): 425481.53910530685
+COVID-period mean CT home price (2020–2023): 609405.3387548988
+Percent change: 43.22721028892177 %
+
+
+
+
+#Home prices Graph with covid line
+import matplotlib.pyplot as plt
+
+
+plt.figure(figsize=(10,5))
+plt.plot(df["Year"], df["mean_residential_price_2023usd"], marker="o")
+plt.axvline(2020, color="red", linestyle="--", label="COVID Begins")
+plt.title("Connecticut Home Prices (Inflation-Adjusted to 2023 USD)")
+plt.ylabel("Mean Price (2023 USD)")
+plt.xlabel("Year")
+plt.legend()
+plt.grid()
+plt.show()
+
+
+<img width="876" height="470" alt="image" src="https://github.com/user-attachments/assets/c7e90321-ee99-4906-b7d2-d09561b114e4" />
+
+
+Connecticut home prices experienced a substantial and sustained real increase during the COVID-19 years. This supports the idea that the pandemic fundamentally reshaped the housing market, with demand surges and limited inventory driving prices well above pre-pandemic levels. Affordability pressures likely intensified as price growth outpaced typical income gains.
+
+
+## Research Question 2: How did real median household income change?
+# Split into pre-pandemic (2015–2019) and COVID-era (2020–2023)
+# Calculate means and percent changes
+
+
+df = final_year_df.copy()
+
+
+pre = df[(df["Year"] >= 2015) & (df["Year"] <= 2019)]
+during = df[(df["Year"] >= 2020) & (df["Year"] <= 2023)]
+
+
+pre_income = pre["median_household_income"].mean()
+during_income = during["median_household_income"].mean()
+
+
+income_pct_change = ((during_income - pre_income) / pre_income) * 100
+
+
+print("Pre-pandemic mean median household income (2015–2019):", pre_income)
+print("COVID-period mean median household income (2020–2023):", during_income)
+print("Percent change:", income_pct_change, "%")
+Pre-pandemic mean median household income (2015–2019): 77168.0
+COVID-period mean median household income (2020–2023): 81260.0
+Percent change: 5.3027161517727555 %
+
+#Income Graph with covid line
+
+plt.figure(figsize=(10,5))
+plt.plot(df["Year"], df["median_household_income"], marker="o", color="green")
+plt.axvline(2020, color="red", linestyle="--", label="COVID Begins")
+plt.title("U.S. Real Median Household Income (Inflation-Adjusted)")
+plt.xlabel("Year")
+plt.ylabel("Median Household Income (USD)")
+plt.grid()
+plt.legend()
+plt.show()
+
+
+<img width="868" height="470" alt="image" src="https://github.com/user-attachments/assets/1e88ef56-8c4b-48c5-81d9-7bcdc3db08f1" />
+
+
+Unlike home prices, which surged rapidly during the pandemic, real median household income showed only a small positive change across the COVID period. In fact:
+
+Income peaked just before the pandemic (2019)
+
+Declined in 2020–2022 due to labor market disruptions
+
+Rebounded in 2023, but still grew only modestly overall
+
+This suggests that while the housing market experienced extreme upward pressure, household earnings did not grow proportionally. The gap between housing costs and income likely intensified affordability challenges for many families during and after the pandemic.
+
+
+## Research Question 3: What relationship exists between changes in income and changes in home prices during and after the pandemic?
+
+# Correlation between household income and inflation-adjusted home prices
+corr = df["median_household_income"].corr(df["mean_residential_price_2023usd"])
+print("Correlation:", corr)
+Correlation: 0.5871509255866934
+
+According to correlation, income influences housing prices, but income alone cannot explain dramatic price shifts, especially the pandemic spike in 2020.
+
+#Linear Regression: Income vs. Housing Price
+
+
+X = df["median_household_income"].values.reshape(-1, 1)
+y = df["mean_residential_price_2023usd"].values.reshape(-1, 1)
+
+
+model = LinearRegression()
+model.fit(X, y)
+
+
+slope = model.coef_[0][0]
+intercept = model.intercept_[0]
+r2 = model.score(X, y)
+
+
+print("Regression Equation: price = {:.2f} * income + {:.2f}".format(slope, intercept))
+print("R-squared:", r2)
+Regression Equation: price = 18.58 * income + -960292.71
+R-squared: 0.34474620941731093
+
+
+#Regression Model of income vs housing prices
+#Generates prediction line, and each dot on the graph represents a year
+#Use mean because that is the data we want to explain
+#Use median because of its earning
+
+
+x_range = np.linspace(X.min(), X.max(), 200).reshape(-1, 1)
+y_pred = model.predict(x_range)
+
+
+plt.figure(figsize=(8,6))
+plt.scatter(X, y, color="purple", label="Actual Data", alpha=0.7)
+plt.plot(x_range, y_pred, color="orange", linewidth=2.5, label="Regression Line")
+
+
+plt.title("Linear Regression: Income vs. Home Prices", fontsize=14)
+plt.xlabel("Median Household Income (USD)", fontsize=12)
+plt.ylabel("Mean Residential Home Price (2023 USD)", fontsize=12)
+
+
+plt.grid(True, alpha=0.3)
+plt.legend()
+plt.show()
+
+
+<img width="725" height="552" alt="image" src="https://github.com/user-attachments/assets/226bb2e0-10b3-4170-b53e-ec761395b21b" />
+
+
+#Slope = 18.579314981810274
+#For every $1 increase in median household income, the mean residential price increases by ~$18.58
+
+
+While income and home prices have a moderate long-term positive relationship, income does not account for the dramatic surge in housing prices during COVID-19.
+The pandemic housing market was influenced primarily by non-income factors, leading to a widening affordability gap.
+
+This disconnect reinforces the idea that rising home prices during COVID-19 did not reflect improved household economic conditions—but instead structural shifts in housing demand and supply.
+
+
+## Research Question 4: What broader conclusions can we draw about post-pandemic affordability and economic resilience?
+
+The combined trends in housing prices and household income reveal that the post-pandemic economy experienced a significant imbalance between property values and earnings. While home prices rose sharply during the COVID-19 period—far outpacing inflation—median household income grew only modestly. This widening gap indicates that housing affordability declined substantially, suggesting that rising property values did not reflect genuine improvements in household financial strength. Instead, the rapid escalation in home prices points to structural pressures in the housing market rather than broad-based economic recovery.
+
+Overall, the evidence suggests that the post-pandemic period was characterized by increased economic inequality and a decline in affordability, as income growth failed to keep pace with the surging cost of homeownership. These findings highlight vulnerabilities in economic resilience, especially for households attempting to enter or remain in the housing market after the pandemic.
+
+
+
+
+
 Milestone 4: Final Project Submission 
 
 Title: Impact of COVID-19 on the Economy: Home Prices and Household Earnings
