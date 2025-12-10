@@ -6,7 +6,7 @@
 
 ---
 
-## Summary
+## Project Summary
 
 This project examines how the COVID-19 pandemic reshaped housing affordability by analyzing two key indicators: inflation-adjusted residential home prices in Connecticut and real median household income in the United States. Housing markets experienced dramatic volatility during the pandemic, and policymakers, researchers, and households continue to debate whether these shifts reflect genuine economic resilience or growing structural inequality. Our project aims to provide empirical insight into this question by integrating multiple datasets, performing systematic data cleaning, and generating reproducible year-level indicators for the period 2015–2023.
 
